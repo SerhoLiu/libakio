@@ -22,7 +22,7 @@
 #define HASHMAP_INIT_SIZE (1 << 9)
 
 typedef struct {
-    void *key;                      
+    const void *key;                      
     void *value;
     int isdel;                    
 } map_entry;
@@ -72,7 +72,7 @@ void hashmap_free(hashmap *map)
 }
 
 
-int hashmap_put(hashmap *map, const void *key, const void *value)
+int hashmap_put(hashmap *map, const void *key, void *value)
 {
     map_entry *entry;
 
@@ -83,7 +83,6 @@ int hashmap_put(hashmap *map, const void *key, const void *value)
     /* 当 use/size >= 2/3 时，扩大表 */
     if (map->use * 3 >= map->size * 2) {
         hashmap_resize(map);
-        printf("i'm resize.....now size %ld\n", map->size);
     }
 
     unsigned long hash = string_hash(key);
@@ -135,7 +134,6 @@ void *hashmap_get(hashmap *map, const void *key)
             return NULL;
         }
 
-        /* key 相同，查找成功 */
         if ((entry->key != NULL) && (!map->compare(entry->key, key))) {
             return entry->value;
         }
@@ -166,7 +164,6 @@ void *hashmap_delete(hashmap *map, const void *key)
             return NULL;
         }
 
-        /* key 相同，查找成功 */
         if ((entry->key != NULL) && (!map->compare(entry->key, key))) {
             entry->key = NULL;
             entry->isdel = TRUE;
@@ -216,7 +213,6 @@ static void hashmap_resize(hashmap *map)
 }
 
 
-/* 这个 Hash 函数来自于 Python */
 static unsigned long string_hash(const char *str) {
     unsigned long x;
     unsigned long len = 0;

@@ -18,7 +18,7 @@ hashmap *hashmap_new(unsigned long size, compare_key *compare);
 
 void hashmap_free(hashmap *map);
 
-int hashmap_put(hashmap *map, const void *key, const void *value);
+int hashmap_put(hashmap *map, const void *key, void *value);
 
 void *hashmap_get(hashmap *map, const void *key);
 
