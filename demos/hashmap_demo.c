@@ -2,7 +2,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include <sys/time.h>
+
+/*
+ * Hashmap 使用，其中 Key 和 Value 均为指针类型，Key 定义为 const 类型，
+ * 使用时需要自己管理指针指向的内容：下面将 wordlist 文件中的单词加入 Hashmap
+ * 中
+ */
 
 long long get_ustime_sec(void)
 {
@@ -15,51 +22,60 @@ long long get_ustime_sec(void)
     return ust;
 }
 
-typedef struct {
-    int index;
-    char word[30];
-} value;
+static int value = 1;
 
+/* 定义对 Key 比较的函数 */
 int compare_word(const void *desc, const void *src)
 {
     return strcmp(desc, src);
 }
 
+
 int main(int argc, char **argv)
 {
+    /* 新建一个使用默认初始大小的 Hashmap */
     hashmap *map = hashmap_new(0, compare_word);
-    FILE *f = fopen("test/wordlist.txt", "r");
-    
-    long long start, stop;
+    assert(map != NULL);
+
+    FILE *f = fopen("wordlist.txt", "r");
+    assert(f != NULL);
+
+    char *key;
     int i = 0;
-    
+    long long start, stop;
+
     start = get_ustime_sec();
     while (!feof(f)) {
         i++;
-        value *v = (value *)malloc(sizeof(value));
-        fscanf(f, "%s\n", v->word);
-        v->index = i;
-        hashmap_put(map, v->word, v);
+        key = (char *)malloc(sizeof(char) * 30);
+        assert(key != NULL);
+
+        fscanf(f, "%s\n", key);
+        hashmap_put(map, key, &value);
     }
     stop = get_ustime_sec();
-    printf("cost time %lld\n", stop-start);
+
+    printf("put %d word in hashmap cost time %lldμs\n", i, stop-start);
+    
+    /* 查询 */
     char test[30] = "comically";
-    value *t = hashmap_get(map, test);
-    printf("%p\n", t);
-    printf("%d %s\n", t->index, t->word);
+    int *t = hashmap_get(map, test);
+    if (t) {
+        printf("%s in wordlist\n", test);
+    } else {
+        printf("%s not in wordlist\n", test);
+    }
 
     hashmap_delete(map, test);
 
     t = hashmap_get(map, test);
-    printf("%p\n", t);
-    //printf("%d %s\n", t->index, t->word);
-    value *v = (value *)malloc(sizeof(value));
-    v->index = 88;
-    strcpy(v->word, test);
-    hashmap_put(map, test, v);
+    if (t) {
+        printf("%s in wordlist\n", test);
+    } else {
+        printf("%s not in wordlist\n", test);
+    }
 
-    t = hashmap_get(map, test);
-    printf("%p\n", t);
-    printf("%d %s\n", t->index, t->word);
+    /* 在删除 Hashmap 前，需要自己释放 Key, Value 指向的内存 */
+    hashmap_free(map);
     return 0;
 }
