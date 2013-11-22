@@ -1,7 +1,7 @@
 CC = gcc
 AR = ar
 
-CFLAGS = -I ./include -Wall -Werror -Wno-unused -O3 -g
+CFLAGS = -I ./include -Wall -Wno-unused -O3 -g
 
 OBJS = $(wildcard src/*.o)
 TESTS = $(wildcard tests/*-test)
