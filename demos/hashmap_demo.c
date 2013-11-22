@@ -29,6 +29,7 @@ int main(int argc, char **argv)
 {
     hashmap *map = hashmap_new(0, compare_word);
     FILE *f = fopen("test/wordlist.txt", "r");
+    
     long long start, stop;
     int i = 0;
     
