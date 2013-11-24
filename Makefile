@@ -3,21 +3,32 @@ AR = ar
 
 CFLAGS = -I ./include -Wall -Wno-unused -O3 -g
 
-OBJS = $(wildcard src/*.o)
+ALLOBJS = $(wildcard src/*.o)
 TESTS = $(wildcard tests/*-test)
 DEMOS = $(wildcard demos/*-demo)
 
 # For hashmap
-#OBJS = src/hashmap.o
+src/hashmap.o: src/hashmap.c
+	$(CC) $< -c $(CFLAGS) -o $@ 
 
-hashmap-test: $(OBJS)
-	$(CC) $(CFLAGS) -o tests/$@  tests/hashmap_test.c $(OBJS)
+hashmap-test: src/hashmap.o
+	$(CC) $(CFLAGS) -o tests/$@  tests/hashmap_test.c src/hashmap.o
 
 hashmap-demo: $(OBJS)
 	$(CC) $(CFLAGS) -o demos/$@  demos/hashmap_demo.c $(OBJS)
+
+# For bitset
+src/bitset.o: src/bitset.c
+	$(CC) $< -c $(CFLAGS) -o $@
+
+bitset-test: $(OBJS)
+	$(CC) $(CFLAGS) -o tests/$@  tests/bitset_test.c src/bitset.o
+
+bitset-demo: $(OBJS)
+	$(CC) $(CFLAGS) -o demos/$@  demos/bitset_demo.c src/bitset.o
 
  
 # Clean
 .PHONY: clean 
 clean:
-	rm -f $(OBJS) $(TESTS) $(DEMOS)
+	rm -f $(ALLOBJS) $(TESTS) $(DEMOS)
