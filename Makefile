@@ -27,6 +27,15 @@ bitset-test: $(OBJS)
 bitset-demo: $(OBJS)
 	$(CC) $(CFLAGS) -o demos/$@  demos/bitset_demo.c src/bitset.o
 
+# For BloomFilter
+src/bloomfilter.o: src/bloomfilter.c
+	$(CC) $< -c $(CFLAGS) -o $@
+
+bloomfilter-test: src/bloomfilter.o src/bitset.o
+	$(CC) $(CFLAGS) -o tests/$@  tests/bloomfilter_test.c src/bloomfilter.o src/bitset.o -lm
+
+bloomfilter-demo: src/bloomfilter.o src/bitset.o
+	$(CC) $(CFLAGS) -o demos/$@  demos/bloomfilter_demo.c $< -lm
  
 # Clean
 .PHONY: clean 
