@@ -23,13 +23,19 @@ long long get_ustime_sec(void)
 }
 
 static int value = 1;
+static int newvalue = 2;
 
 /* 定义对 Key 比较的函数 */
-int compare_word(const void *desc, const void *src)
+int compare_word(const char *desc, const char *src)
 {
     return strcmp(desc, src);
 }
 
+/* map 函数，其中可以对 Value 值进行修改 */
+void map_func(const char *key, void **value, const void *other)
+{
+    *value = &newvalue;
+}
 
 int main(int argc, char **argv)
 {
@@ -61,7 +67,17 @@ int main(int argc, char **argv)
     char test[30] = "comically";
     int *t = hashmap_get(map, test);
     if (t) {
-        printf("%s in wordlist\n", test);
+        printf("%s in wordlist and value = %d\n", test, *t);
+    } else {
+        printf("%s not in wordlist\n", test);
+    }
+
+    /* 改变 value 值 */
+    hashmap_map(map, map_func, NULL);
+    
+    t = hashmap_get(map, test);
+    if (t) {
+        printf("%s in wordlist and value = %d\n", test, *t);
     } else {
         printf("%s not in wordlist\n", test);
     }
@@ -75,7 +91,10 @@ int main(int argc, char **argv)
         printf("%s not in wordlist\n", test);
     }
 
-    /* 在删除 Hashmap 前，需要自己释放 Key, Value 指向的内存 */
+    /**
+     * 在删除 Hashmap 前，需要自己管理 Key, Value 指向的内存
+     * 这里并没有释放 Key 内存
+     */
     hashmap_free(map);
     return 0;
 }
