@@ -22,7 +22,7 @@
 #define HASHMAP_INIT_SIZE (1 << 9)
 
 typedef struct {
-    const void *key;                      
+    const char *key;                      
     void *value;
     int isdel;                    
 } map_entry;
@@ -34,8 +34,8 @@ struct hashmap {
     map_entry *entrys;
 };
 
-static unsigned long string_hash(const char *str);
-static void hashmap_resize(hashmap *map);
+static unsigned long _string_hash(const char *str);
+static void _hashmap_resize(hashmap *map);
 
 
 hashmap *hashmap_new(unsigned long size, compare_key *compare)
@@ -47,7 +47,7 @@ hashmap *hashmap_new(unsigned long size, compare_key *compare)
         return NULL;
     }
 
-    if (size == 0) {
+    if (size <= 0) {
         size = HASHMAP_INIT_SIZE;
     }
     map->size = size;
@@ -72,7 +72,7 @@ void hashmap_free(hashmap *map)
 }
 
 
-int hashmap_put(hashmap *map, const void *key, void *value)
+int hashmap_put(hashmap *map, const char *key, void *value)
 {
     map_entry *entry;
 
@@ -82,10 +82,10 @@ int hashmap_put(hashmap *map, const void *key, void *value)
 
     /* 当 use/size >= 2/3 时，扩大表 */
     if (map->use * 3 >= map->size * 2) {
-        hashmap_resize(map);
+        _hashmap_resize(map);
     }
 
-    unsigned long hash = string_hash(key);
+    unsigned long hash = _string_hash(key);
     unsigned long index = hash;
     unsigned long perturb = hash;
     
@@ -115,7 +115,7 @@ int hashmap_put(hashmap *map, const void *key, void *value)
 }
 
 
-void *hashmap_get(hashmap *map, const void *key)
+void *hashmap_get(const hashmap *map, const char *key)
 {
     map_entry *entry;
 
@@ -123,7 +123,7 @@ void *hashmap_get(hashmap *map, const void *key)
         return NULL;
     }
 
-    unsigned long hash = string_hash(key);
+    unsigned long hash = _string_hash(key);
     unsigned long index = hash;
     unsigned long perturb = hash;
 
@@ -144,7 +144,7 @@ void *hashmap_get(hashmap *map, const void *key)
 }
 
 
-void *hashmap_delete(hashmap *map, const void *key)
+void *hashmap_delete(hashmap *map, const char *key)
 {
     map_entry *entry;
 
@@ -152,7 +152,7 @@ void *hashmap_delete(hashmap *map, const void *key)
         return NULL;
     }
 
-    unsigned long hash = string_hash(key);
+    unsigned long hash = _string_hash(key);
     unsigned long index = hash;
     unsigned long perturb = hash;
 
@@ -175,7 +175,30 @@ void *hashmap_delete(hashmap *map, const void *key)
     } 
 }
 
-static void hashmap_resize(hashmap *map)
+int hashmap_map(const hashmap *map, hashmap_map_func *func, const void *other)
+{
+    unsigned long i, use, size;
+    map_entry *entry;
+
+    if (map == NULL || func == NULL) {
+        return 0;
+    }
+    
+    size = map->size;
+    use = map->use;
+
+    for (i = 0; (use > 0) && (i < size); i++) {
+        entry = &(map->entrys[i]);
+        if (entry->key) {
+            func(entry->key, entry->value, other);
+            use--;
+        } 
+    }
+
+    return 1;
+}
+
+static void _hashmap_resize(hashmap *map)
 {
     unsigned long oldsize, newsize, olduse, i;
     map_entry *entry, *temp;
@@ -213,7 +236,7 @@ static void hashmap_resize(hashmap *map)
 }
 
 
-static unsigned long string_hash(const char *str) {
+static unsigned long _string_hash(const char *str) {
     unsigned long x;
     unsigned long len = 0;
  

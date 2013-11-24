@@ -10,18 +10,22 @@
 #ifndef _LIBAKIO_HASHMAP_H_
 #define _LIBAKIO_HASHMAP_H_
 
-typedef int compare_key(const void *desc, const void *src);
-
 typedef struct hashmap hashmap;
+
+typedef int compare_key(const char *desc, const char *src);
+
+typedef void hashmap_map_func(const char *key, void *value, const void *other);
 
 hashmap *hashmap_new(unsigned long size, compare_key *compare);
 
 void hashmap_free(hashmap *map);
 
-int hashmap_put(hashmap *map, const void *key, void *value);
+int hashmap_put(hashmap *map, const char *key, void *value);
 
-void *hashmap_get(hashmap *map, const void *key);
+void *hashmap_get(const hashmap *map, const char *key);
 
-void *hashmap_delete(hashmap *map, const void *key);
+void *hashmap_delete(hashmap *map, const char *key);
+
+int hashmap_map(const hashmap *map, hashmap_map_func *func, const void *other);
 
 #endif 

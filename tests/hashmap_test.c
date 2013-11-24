@@ -6,9 +6,14 @@ static char *KEY = "testkey";
 static char *VALUE = "testvalue";
 static hashmap *map;
 
-int compare(const void *desc, const void *src)
+int compare(const char *desc, const char *src)
 {
     return strcmp(desc, src);
+}
+
+void map_func(const char *key, void *value, const void *other)
+{
+    printf("%s: %s\n", key, (char *)value);
 }
 
 char *test_new_hashmap()
@@ -33,6 +38,13 @@ char *test_hashmap_get()
     value = hashmap_get(map, KEY);
     mu_assert(value != NULL, "get from hashmap failed!");
     debug("### the get Value: %s", value);
+    return NULL;
+}
+
+char *test_hashmap_map()
+{
+    int r = hashmap_map(map, map_func, NULL);
+    mu_assert(r == 1, "hashmap map failed");
     return NULL;
 }
 
@@ -61,6 +73,7 @@ char *all_tests() {
     mu_run_test(test_new_hashmap);
     mu_run_test(test_hashmap_put);
     mu_run_test(test_hashmap_get);
+    mu_run_test(test_hashmap_map);
     mu_run_test(test_hashmap_delete);
     mu_run_test(test_free_hashmap);
   
