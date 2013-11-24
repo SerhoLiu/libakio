@@ -14,7 +14,7 @@ typedef struct hashmap hashmap;
 
 typedef int compare_key(const char *desc, const char *src);
 
-typedef void hashmap_map_func(const char *key, void *value, const void *other);
+typedef void hashmap_map_func(const char *key, void **value, const void *other);
 
 hashmap *hashmap_new(unsigned long size, compare_key *compare);
 

@@ -190,7 +190,7 @@ int hashmap_map(const hashmap *map, hashmap_map_func *func, const void *other)
     for (i = 0; (use > 0) && (i < size); i++) {
         entry = &(map->entrys[i]);
         if (entry->key) {
-            func(entry->key, entry->value, other);
+            func(entry->key, &(entry->value), other);
             use--;
         } 
     }

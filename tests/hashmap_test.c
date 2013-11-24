@@ -11,9 +11,9 @@ int compare(const char *desc, const char *src)
     return strcmp(desc, src);
 }
 
-void map_func(const char *key, void *value, const void *other)
+void map_func(const char *key, void **value, const void *other)
 {
-    printf("%s: %s\n", key, (char *)value);
+    printf("%s: %s\n", key, (char *)(*value));
 }
 
 char *test_new_hashmap()
