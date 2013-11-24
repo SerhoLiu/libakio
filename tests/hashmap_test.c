@@ -60,13 +60,6 @@ char *test_hashmap_delete()
     return NULL;
 }
 
-char *test_free_hashmap()
-{
-    void *p = (void *)map;
-    hashmap_free(map);
-    mu_assert(map == p, "delete hashmap failed!")
-    return NULL;
-}
 
 char *all_tests() {
     mu_suite_start();
@@ -75,7 +68,6 @@ char *all_tests() {
     mu_run_test(test_hashmap_get);
     mu_run_test(test_hashmap_map);
     mu_run_test(test_hashmap_delete);
-    mu_run_test(test_free_hashmap);
   
     return NULL;
  }
