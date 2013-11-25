@@ -14,8 +14,8 @@ src/hashmap.o: src/hashmap.c
 hashmap-test: src/hashmap.o
 	$(CC) $(CFLAGS) -o tests/$@  tests/hashmap_test.c src/hashmap.o
 
-hashmap-demo: $(OBJS)
-	$(CC) $(CFLAGS) -o demos/$@  demos/hashmap_demo.c $(OBJS)
+hashmap-demo: src/hashmap.o
+	$(CC) $(CFLAGS) -o demos/$@  demos/hashmap_demo.c src/hashmap.o
 
 # For bitset
 src/bitset.o: src/bitset.c
@@ -35,7 +35,7 @@ bloomfilter-test: src/bloomfilter.o src/bitset.o
 	$(CC) $(CFLAGS) -o tests/$@  tests/bloomfilter_test.c src/bloomfilter.o src/bitset.o -lm
 
 bloomfilter-demo: src/bloomfilter.o src/bitset.o
-	$(CC) $(CFLAGS) -o demos/$@  demos/bloomfilter_demo.c $< -lm
+	$(CC) $(CFLAGS) -o demos/$@  demos/bloomfilter_demo.c src/bloomfilter.o src/bitset.o -lm
  
 # Clean
 .PHONY: clean 
