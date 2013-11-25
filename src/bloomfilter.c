@@ -38,11 +38,16 @@ bloomfilter *bloomfilter_new(unsigned long capacity, float erate)
     filter->erate = erate;
     filter->count = 0;
 
+    /* 这里通过 f = 0.5^k 大约算出 k 的取值 */
     filter->k = ceilf(log2f(1.0 / erate));
     if (filter->k < 1) filter->k = 1;
     if (filter->k > 30) filter->k = 30;
 
+    /* 通过 M/N = ln2 * k 计算 M */
     filter->nbits = capacity * ceilf((filter->k / 0.69));
+
+    /* 通常根据上面计算得出 M/N 和 K 后，需要重新计算准确的 f */
+    
     filter->set = bitset_new(filter->nbits);
 
     return filter;
