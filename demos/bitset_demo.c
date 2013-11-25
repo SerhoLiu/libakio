@@ -58,5 +58,7 @@ int main(int argc, char **argv)
     printf("Common: \n");
     print_array(common, j);
 
+    bitset_free(set);
+    
     return 0;
 }
