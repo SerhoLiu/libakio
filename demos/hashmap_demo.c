@@ -60,7 +60,8 @@ int main(int argc, char **argv)
         hashmap_put(map, key, &value);
     }
     stop = get_ustime_sec();
-
+    fclose(f);
+    
     printf("put %d word in hashmap cost time %lldμs\n", i, stop-start);
     
     /* 查询 */
