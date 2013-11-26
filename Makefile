@@ -36,6 +36,16 @@ bloomfilter-test: src/bloomfilter.o src/bitset.o
 
 bloomfilter-demo: src/bloomfilter.o src/bitset.o
 	$(CC) $(CFLAGS) -o demos/$@  demos/bloomfilter_demo.c src/bloomfilter.o src/bitset.o -lm
+
+# For SkipList
+src/skiplist.o: src/skiplist.c
+	$(CC) $< -c $(CFLAGS) -o $@
+
+skiplist-test: src/skiplist.o
+	$(CC) $(CFLAGS) -o tests/$@  tests/skiplist_test.c src/skiplist.o
+
+skiplist-demo: src/bloomfilter.o src/bitset.o
+	$(CC) $(CFLAGS) -o demos/$@  demos/skiplist_demo.c src/skiplist.o
  
 # Clean
 .PHONY: clean 
