@@ -12,11 +12,7 @@ typedef struct skiplist_node {
     const char *key;
     void *value;
 
-    struct skiplist_level {
-        struct skiplist_node *forward;
-        unsigned long span;
-    } level[1];
-
+    struct skiplist_node *forward[1];
 } skiplist_node;
 
 struct skiplist {
@@ -31,7 +27,7 @@ struct skiplist {
 static skiplist_node *_create_node(int level, const char *key, void *value)
 {
     skiplist_node *node;
-    node = (skiplist_node *)malloc(sizeof(*node) + level*sizeof(struct skiplist_level));
+    node = (skiplist_node *)malloc(sizeof(*node) + level*sizeof(struct skiplist_node));
     if (node == NULL) return NULL;
 
     node->key = key;
@@ -54,8 +50,7 @@ skiplist *skiplist_new(compare_key *compare)
     list->header = _create_node(SKIPLIST_MAXLEVEL, NULL, NULL);
     int i;
     for (i = 0; i < SKIPLIST_MAXLEVEL; i++) {
-        list->header->level[i].forward = NULL;
-        list->header->level[i].span = 0;
+        list->header->forward[i] = NULL;
     }
     list->tail = NULL;
 
@@ -64,15 +59,30 @@ skiplist *skiplist_new(compare_key *compare)
 
 void skiplist_free(skiplist *list)
 {
+    if (list == NULL) return;
+
     skiplist_node *node, *next;
-    node = list->header->level[0].forward;
+    node = list->header->forward[0];
     
     free(list->header);
 
     while(node) {
-        next = node->level[0].forward;
+        next = node->forward[0];
         free(node);
         node = next;
     }
     free(list);
+}
+
+/**
+ * 返回一个介于 1 和 ZSKIPLIST_MAXLEVEL 之间的随机值，作为节点的层数。
+ *
+ * 根据幂次定律(power law)，数值越大，函数生成它的几率就越小
+ */
+static int _random_level()
+{
+    int level = 1;
+    while ((random()&0xFFFF) < (SKIPLIST_P * 0xFFFF))
+        level += 1;
+    return (level < SKIPLIST_MAXLEVEL) ? level : SKIPLIST_MAXLEVEL;
 }
