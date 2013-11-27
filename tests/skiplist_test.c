@@ -35,6 +35,13 @@ char *test_skiplist_insert()
     return NULL;
 }
 
+char *test_skiplist_length()
+{
+    unsigned long l = skiplist_length(list);
+    mu_assert(l == 2, "skiplist length failed!")
+    return NULL;
+}
+
 char *test_skiplist_search()
 {
     int *v;
@@ -53,6 +60,9 @@ char *test_skiplist_delete()
     v = skiplist_delete(list, test2);
     mu_assert(v == &value, "skiplist delete failed!");
 
+    unsigned long l = skiplist_length(list);
+    mu_assert(l == 1, "skiplist delete failed!")
+
     v = skiplist_search(list, test2);
     mu_assert(v == NULL, "skiplist delete failed!");
 
@@ -63,6 +73,7 @@ char *all_tests() {
     mu_suite_start();
     mu_run_test(test_skiplist_new);
     mu_run_test(test_skiplist_insert);
+    mu_run_test(test_skiplist_length);
     mu_run_test(test_skiplist_search);
     mu_run_test(test_skiplist_delete);
     skiplist_free(list);

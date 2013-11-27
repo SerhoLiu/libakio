@@ -75,6 +75,12 @@ void skiplist_free(skiplist *list)
     free(list);
 }
 
+unsigned long skiplist_length(const skiplist *list)
+{
+    if (list == NULL) return 0;
+    return list->length;
+}
+
 /**
  * 返回一个介于 1 和 SKIPLIST_MAXLEVEL 之间的随机值，作为节点的层数。
  *
@@ -135,6 +141,7 @@ int skiplist_insert(skiplist *list, const char *key, void *value)
         x->forward[i] = update[i]->forward[i];
         update[i]->forward[i] = x;
     }
+    list->length++;
 
     return 1;
 }
@@ -194,6 +201,7 @@ void *skiplist_delete(skiplist *list, const char *key)
         }
         void *oldvalue = x->value;
         free(x);
+        list->length--;
 
         /* 更新 SkipList 层数 */
         while (list->level > 1 &&

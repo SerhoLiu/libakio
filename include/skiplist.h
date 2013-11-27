@@ -34,6 +34,11 @@ skiplist *skiplist_new(compare_key *compare);
 void skiplist_free(skiplist *list);
 
 /**
+ * 获得 SkipList 长度（即 Key/Value 对个数
+ */
+unsigned long skiplist_length(const skiplist *list);
+
+/**
  * 插入 Key/Value，其中 key/value 均不能为 NULL
  *
  * Return value: 0 失败; 1 成功
