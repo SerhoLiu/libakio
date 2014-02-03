@@ -46,7 +46,17 @@ skiplist-test: src/skiplist.o
 
 skiplist-demo: src/bloomfilter.o src/bitset.o
 	$(CC) $(CFLAGS) -o demos/$@  demos/skiplist_demo.c src/skiplist.o
- 
+
+# For Double LinkList
+src/linklist.o: src/linklist.c
+	$(CC) $< -c $(CFLAGS) -o $@
+
+linklist-test: src/linklist.o
+	$(CC) $(CFLAGS) -o tests/$@  tests/linklist_test.c src/linklist.o
+
+linklist-demo: src/linklist.o
+	$(CC) $(CFLAGS) -o demos/$@  demos/linklist_demo.c src/linklist.o
+
 # Clean
 .PHONY: clean 
 clean:
