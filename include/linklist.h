@@ -12,21 +12,32 @@
 
 typedef void free_value(void *value);
 
+struct list_node {
+    struct list_node *prev, *next;
+    void *value;
+};
+
+struct linklist {
+    struct list_node *head, *tail;
+    unsigned long len;
+    free_value *free_func;
+};
+
 typedef struct list_node list_node;
 typedef struct linklist linklist;
 
 
-#define linklist_length(l) ((l)->len)
+#define LINKLIST_LENGTH(l) ((l)->len)
 
-#define linklist_head(l) ((l)->head)
+#define LINKLIST_HEAD(l) ((l)->head)
 
-#define linklist_tail(l) ((l)->tail)
+#define LINKLIST_TAIL(l) ((l)->tail)
 
-#define linklist_prev_node(n) ((n)->prev)
+#define LINKLIST_PREV_NODE(n) ((n)->prev)
 
-#define linklist_next_node(n) ((n)->next)
+#define LINKLIST_NEXT_NODE(n) ((n)->next)
 
-#define linklist_node_value(n) ((n)->value)
+#define LINKLIST_NODE_VALUE(n) ((n)->value)
 
 
 linklist *linklist_new(free_value *func);

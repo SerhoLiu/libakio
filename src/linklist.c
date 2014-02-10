@@ -8,22 +8,6 @@
 #include "linklist.h"
 #include <stdlib.h>
 
-struct list_node {
-
-    struct list_node *prev, *next;
-
-    void *value;
-};
-
-struct linklist {
-
-    struct list_node *head, *tail;
-
-    unsigned long len;
-
-    free_value *free_func;
-};
-
 
 linklist *linklist_new(free_value *func)
 {
