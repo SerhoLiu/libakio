@@ -10,6 +10,9 @@
 #ifndef _LIBAKIO_LINKLIST_H_
 #define _LIBAKIO_LINKLIST_H_
 
+/**
+ * LinkList 中 Value 的释放函数
+ */
 typedef void free_value(void *value);
 
 struct list_node {
@@ -44,12 +47,28 @@ linklist *linklist_new(free_value *func);
 
 void linklist_free(linklist *list);
 
+/**
+ * 创建一个包含 Value 的结点并添加到头部
+ */ 
 linklist *linklist_add_head(linklist *list, void *value);
 
+/**
+ * 创建一个包含 Value 的结点并添加到尾部
+ */ 
 linklist *linklist_add_tail(linklist *list, void *value);
 
+/**
+ * 创建一个包含 Value 的结点并根据 after 指示插入到 node 前或后
+ */
 linklist *linklist_insert_node(linklist *list, list_node *node,
                                void *value, int after);
+
+
+/**
+ * 将结点 src 按照 after 指示移动到 dst 前或者后
+ */
+linklist *linklist_move_node(linklist *list, list_node *src,
+                             list_node *dst, int after);
 
 void linklist_delete_node(linklist *list, list_node *node);
 

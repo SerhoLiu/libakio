@@ -35,7 +35,7 @@ void linklist_free(linklist *list)
     len = list->len;
     while(len--) {
         next = current->next;
-        if (list->free_func) {
+        if (list->free_func != NULL) {
             list->free_func(current->value);
         }
         free(current);
@@ -133,21 +133,59 @@ linklist *linklist_insert_node(linklist *list, list_node *node,
 }
 
 
+linklist *linklist_move_node(linklist *list, list_node *src,
+                             list_node *dst, int after)
+{
+    
+    if (list == NULL || src == NULL || dst == NULL || src == dst ) {
+        return NULL;
+    }
+
+    if (src->prev != NULL) {
+        src->prev->next = src->next;
+    } else {
+        list->head = src->next;
+    }
+        
+    if (src->next != NULL) {
+        src->next->prev = src->prev;
+    } else {
+        list->tail = src->prev;
+    }
+
+    if (after) {
+        src->prev = dst;
+        src->next = dst->next;
+        if (list->tail == dst) {
+            list->tail = src;
+        }
+    } else {
+        src->next = dst;
+        src->prev = dst->prev;
+        if (list->head == dst) {
+            list->head = src;
+        }
+    }
+
+    return list;
+}
+
+
 void linklist_delete_node(linklist *list, list_node *node)
 {
-    if (node->prev) {
+    if (node->prev != NULL) {
         node->prev->next = node->next;
     } else {
         list->head = node->next;
     }
         
-    if (node->next) {
+    if (node->next != NULL) {
         node->next->prev = node->prev;
     } else {
         list->tail = node->prev;
     }
     
-    if (list->free_func) {
+    if (list->free_func != NULL) {
         list->free_func(node->value);
     }
 
