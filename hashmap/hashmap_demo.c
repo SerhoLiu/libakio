@@ -43,7 +43,7 @@ int main(int argc, char **argv)
     hashmap *map = hashmap_new(0, compare_word);
     assert(map != NULL);
 
-    FILE *f = fopen("wordlist.txt", "r");
+    FILE *f = fopen("../_test/wordlist.txt", "r");
     assert(f != NULL);
 
     char *key;

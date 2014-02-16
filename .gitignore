@@ -13,5 +13,5 @@
 *.dylib
 
 # Executables
-tests/*-test
-demos/*-demo
+*/*-test
+*/*-demo

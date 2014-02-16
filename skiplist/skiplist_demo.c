@@ -37,7 +37,7 @@ int main(int argc, char **argv)
     assert(list != NULL);
     
 
-    FILE *f = fopen("wordlist.txt", "r");
+    FILE *f = fopen("../_test/wordlist.txt", "r");
     assert(f != NULL);
 
     char *key;

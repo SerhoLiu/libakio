@@ -1,6 +1,6 @@
 ## Libakio
 
-My write Algorithms &amp; Data Structures for C
+My write Algorithms &amp; Data Structures for C/C++
 
 > I'm not good at English, so...
 

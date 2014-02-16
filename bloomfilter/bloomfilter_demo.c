@@ -29,7 +29,7 @@ int main(int argc, char **argv)
     long long start, stop;
     char word[30];
 
-    FILE *f = fopen("wordlist.txt", "r");
+    FILE *f = fopen("../_test/wordlist.txt", "r");
     assert(f != NULL);
 
     start = get_ustime_sec();
