@@ -11,12 +11,13 @@
 
 struct timer {
     int32_t      min_heap_idx;
-    struct timer *next;
 
     int64_t when_msec;
 
     void           *data;
-    timer_callback *cb; 
+    timer_callback *cb;
+
+    struct timer *next;
 };
 
 struct timer_heap {
