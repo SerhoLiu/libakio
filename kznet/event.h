@@ -18,13 +18,13 @@ struct event_loop {
     int maxfd;
     int setsize;
 
-    struct ev_event *events;
-    struct ev_fired *fireds;
+    struct ev_event  *events;
+    struct ev_active *actives;
 
+    struct poller     *poller;
     struct timer_heap *timers;
 
     int  stop;
-    void *apidata;
 } event_loop;
 
 
