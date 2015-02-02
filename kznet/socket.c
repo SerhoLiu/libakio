@@ -88,7 +88,6 @@ int set_reuseaddr(char *err, int fd, int on)
     return 0;
 }
 
-
 int tcp_connect(char *err, char *addr, int port, int flags)
 {
     int s, rv;
