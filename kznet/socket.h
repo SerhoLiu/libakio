@@ -14,6 +14,6 @@ int tcp_connect(char *err, char *addr, int port, int flags);
 int tcp_accept(char *err, int sfd, char *ip, int ip_len, int *port);
 int get_peer_name(int fd, char *ip, int ip_len, int *port);
 int get_sock_name(int fd, char *ip, int ip_len, int *port);
-int tcp_server_serve(char *err, char *bindaddr, int port, int backlog);
+int tcp_server_serve(char *err, char *addr, int port, int backlog);
 
 #endif

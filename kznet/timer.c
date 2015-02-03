@@ -10,18 +10,17 @@
 
 
 struct timer {
-    int32_t      min_heap_idx;
-
+    int32_t min_heap_idx;
     int64_t when_msec;
 
-    void           *data;
+    void *data;
     timer_callback *cb;
 
     struct timer *next;
 };
 
 struct timer_heap {
-    int32_t      now, all;
+    int32_t now, all;
     struct timer **tes;
 
     int maxsize;
@@ -76,7 +75,7 @@ void timer_heap_delete(struct timer_heap *heap)
 
 static inline int _reserve(struct timer_heap *heap, int32_t n)
 {
-    int32_t      all;
+    int32_t all;
     struct timer **p;
 
     all = heap->all * 2;
@@ -281,7 +280,7 @@ int delete_timer(event_loop_t *loop, kz_timer_t *t)
 
 int get_shortest_msec(struct timer_heap *heap)
 {
-    int64_t      now_msec, msec;
+    int64_t now_msec, msec;
     struct timer *te;
 
     te = _heap_top(heap);

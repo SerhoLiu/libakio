@@ -90,7 +90,7 @@ int set_reuseaddr(char *err, int fd, int on)
 
 int tcp_connect(char *err, char *addr, int port, int flags)
 {
-    int s, rv;
+    int  s, rv;
     char s_port[sizeof("65535")];
     struct addrinfo hints, *servinfo, *p;
 
@@ -146,7 +146,7 @@ end:
 static inline void sockaddr_tostring(struct sockaddr_storage *sa,
         char *ip, int ip_len, int *port)
 {
-    struct sockaddr_in *s;
+    struct sockaddr_in  *s;
     struct sockaddr_in6 *s6;
 
     if (sa->ss_family == AF_INET) {
@@ -185,8 +185,10 @@ int tcp_accept(char *err, int sfd, char *ip, int ip_len, int *port)
 
 int get_peer_name(int fd, char *ip, int ip_len, int *port)
 {
+    socklen_t salen;
     struct sockaddr_storage sa;
-    socklen_t salen = sizeof(sa);
+    
+    salen = sizeof(sa);
 
     if (getpeername(fd, (struct sockaddr *)&sa, &salen) == -1) {
         if (port != NULL) *port = 0;
@@ -203,8 +205,10 @@ int get_peer_name(int fd, char *ip, int ip_len, int *port)
 
 int get_sock_name(int fd, char *ip, int ip_len, int *port)
 {
+    socklen_t salen;
     struct sockaddr_storage sa;
-    socklen_t salen = sizeof(sa);
+    
+    salen = sizeof(sa);
 
     if (getsockname(fd, (struct sockaddr *)&sa, &salen) == -1) {
         if (port != NULL) *port = 0;
@@ -221,7 +225,7 @@ int get_sock_name(int fd, char *ip, int ip_len, int *port)
 
 int tcp_server_serve(char *err, char *addr, int port, int backlog)
 {
-    int sfd, rv;
+    int  sfd, rv;
     char s_port[sizeof("65535")];
     struct addrinfo hints, *servinfo, *p;
 
