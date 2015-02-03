@@ -212,10 +212,10 @@ static inline void add_millisec_to_now(int32_t msec, int64_t *rmsec)
 }
 
 
-timer_t *create_timer(event_loop_t *loop,
-                      int msec,
-                      timer_callback *cb,
-                      void *data)
+kz_timer_t *create_timer(event_loop_t *loop,
+                         int msec,
+                         timer_callback *cb,
+                         void *data)
 {
     struct timer      *te;
     struct timer_heap *heap;
@@ -251,7 +251,7 @@ timer_t *create_timer(event_loop_t *loop,
     return _heap_push(heap, te) == 0 ? te : NULL;
 }
 
-int delete_timer(event_loop_t *loop, timer_t *t)
+int delete_timer(event_loop_t *loop, kz_timer_t *t)
 {
     struct timer_heap *heap;
 

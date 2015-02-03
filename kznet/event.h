@@ -7,7 +7,7 @@
 #define EV_WRABLE    2
 #define EV_TIMER_END 0
 
-typedef struct timer      timer_t;
+typedef struct timer kz_timer_t;
 typedef struct event_loop event_loop_t;
 
 typedef int timer_callback(event_loop_t *loop, void *data);
@@ -38,12 +38,12 @@ int delete_event(event_loop_t *loop, int fd, int event);
 
 int query_event(event_loop_t *loop, int fd);
 
-timer_t *create_timer(event_loop_t *loop,
-                      int msec,
-                      timer_callback *cb,
-                      void *data);
+kz_timer_t *create_timer(event_loop_t *loop,
+                         int msec,
+                         timer_callback *cb,
+                         void *data);
 
-int delete_timer(event_loop_t *loop, timer_t *t);
+int delete_timer(event_loop_t *loop, kz_timer_t *t);
 
 event_loop_t *event_loop_create(int maxevents, int maxtimers);
 
