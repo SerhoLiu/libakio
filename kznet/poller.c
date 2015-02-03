@@ -217,7 +217,7 @@ int poller_poll(event_loop_t *loop, int timeout)
     tv.tv_sec = timeout / 1000;
     tv.tv_usec = (timeout % 1000) * 1000;
 
-    retval = select(loop->maxfd + 1, &poller->crfds, &poller->cwfds, NULL, &tv);
+    retval = select(loop->maxfd+1, &poller->crfds, &poller->cwfds, NULL, &tv);
     if (retval > 0) {
 
         for (j = 0; j <= loop->maxfd; j++) {
