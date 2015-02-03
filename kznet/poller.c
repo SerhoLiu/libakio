@@ -2,6 +2,7 @@
 #include <string.h>
 #include <assert.h>
 #include <time.h>
+#include <unistd.h>
 
 #include "poller.h"
 
@@ -135,7 +136,7 @@ int poller_poll(event_loop_t *loop, int timeout)
     return numevents;
 }
 
-static char *ev_api_name(void)
+char *poller_name()
 {
     return "epoll";
 }
