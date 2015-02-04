@@ -21,6 +21,9 @@ struct buffer_chain {
     buffer_t *rbuf;
     buffer_t *wbuf;
 
+    size_t total;
+    size_t ssize, rsize;
+
     buffer_pool_t *pool;
 };
 
@@ -48,7 +51,7 @@ buffer_t *buffer_pool_get(buffer_pool_t *pool);
 
 int buffer_pool_put(buffer_pool_t *pool, buffer_t *buf);
 
-ssize_t buffer_chain_recv(buffer_chain_t *chain, int fd, int *err);
-ssize_t buffer_chain_send(buffer_chain_t *chain, int fd, int *err);
+int buffer_chain_recv(buffer_chain_t *chain, int fd);
+int buffer_chain_send(buffer_chain_t *chain, int fd);
 
 #endif

@@ -13,7 +13,7 @@ struct buffer_pool {
     int allocs;
     int size;
 
-    struct buffer head;
+    struct buffer  head;
     struct buffer *tail;
 };
 
@@ -119,16 +119,16 @@ int buffer_pool_put(buffer_pool_t *pool, buffer_t *buf)
     return 0;
 }
 
-ssize_t buffer_chain_recv(buffer_chain_t *chain, int fd, int *err)
+int buffer_chain_recv(buffer_chain_t *chain, int fd)
 {
     size_t   wlen, tlen;
-    ssize_t  rv, total;
+    ssize_t  rv;
     buffer_t *wbuf;
     buffer_t *temp;
     buffer_pool_t *pool;
     struct iovec vec[2];
 
-    total = 0;
+    chain->rsize = 0;
     pool = chain->pool;
 
     while (1) {
@@ -144,12 +144,21 @@ ssize_t buffer_chain_recv(buffer_chain_t *chain, int fd, int *err)
         vec[1].iov_base = temp->last;
 
         rv = readv(fd, vec, 2);
-        if (rv <= 0) {
-            *err = errno;
-            return rv;
+
+        if (rv == 0) return 0;
+        if (rv == -1) {
+            if (errno == EAGAIN) {
+                return 1;
+            }
+            if (errno != EINTR) {
+                return -1;
+            }
+
+            continue;
         }
 
-        total += rv;
+        chain->rsize += rv;
+        chain->total += rv;
 
         if (rv < wlen) {
             wbuf->last += rv;
@@ -171,27 +180,35 @@ ssize_t buffer_chain_recv(buffer_chain_t *chain, int fd, int *err)
         chain->wbuf = temp;
     }
 
-    return total;
+    return 1;
 }
 
-ssize_t buffer_chain_send(buffer_chain_t *chain, int fd, int *err)
+int buffer_chain_send(buffer_chain_t *chain, int fd)
 {
-    int i;
-    size_t   rlen;
-    ssize_t  rv, total;
+    int      i, complete;
+    size_t   rlen, total;
+    ssize_t  rv;
     buffer_t *buf;
-    buffer_pool_t *pool;
-    struct iovec vec[SM_MAX_IOV];
 
-    total = 0;
+    buffer_pool_t *pool;
+    struct iovec   vec[SM_MAX_IOV];
+
+    chain->ssize = 0;
     pool = chain->pool;
     
     while (1) {
+        
+        complete = 0;
+        total = 0;
 
         i = 0;
         for (buf = chain->rbuf; buf != NULL; buf = buf->next) {
             vec[i].iov_base = buf->pos;
-            vec[i].iov_len = buffer_rsize(buf);
+            rlen = buffer_rsize(buf);
+            vec[i].iov_len = rlen;
+            
+            total += rlen;
+            
             i++;
             if (i == SM_MAX_IOV) {
                 break;
@@ -199,37 +216,52 @@ ssize_t buffer_chain_send(buffer_chain_t *chain, int fd, int *err)
         }
 
         rv = writev(fd, vec, i);
-        if (rv <= 0) {
-            *err = errno;
-            return rv;
+
+        if (rv == 0) return 0;
+        if (rv == -1) {
+            if (errno == EAGAIN) {
+                return 1;
+            }
+            if (errno != EINTR) {
+                return -1;
+            }
+
+            continue;
         }
 
-        total += rv;
+        chain->ssize += rv;
+        chain->total -= rv;
 
-        while (chain->rbuf != chain->wbuf) {
+        if (rv == total) {
+            complete = 1;
+        }
+
+        while (rv > 0) {
             buf = chain->rbuf;
             rlen = buffer_rsize(buf);
-            if (rv >= rlen) {
-                rv -= rlen;
+            if (rv > rlen) {
                 chain->rbuf = buf->next;
                 buffer_pool_put(pool, buf);
             } else {
                 buf->pos += rv;
-                rv = 0;
+            }
+            rv -= rlen;
+        }
+
+        if (buf->pos == buf->last) {
+            if (buf->next == NULL) {
+                buf->pos = buf->last = buf->start;
                 break;
+            } else {
+                chain->rbuf = buf->next;
+                buffer_pool_put(pool, buf);
             }
         }
 
-        buf = chain->wbuf;
-        if (rv > 0) {
-            assert(rv <= buffer_rsize(buf));
-            buf->pos += rv;
-            if (buf->pos == buf->last) {
-                buf->pos = buf->last = buf->start;
-                break;
-            }
+        if (!complete) {
+            break;
         }
     }
 
-    return total;
+    return 1;
 }
