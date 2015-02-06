@@ -51,6 +51,8 @@ buffer_t *buffer_pool_get(buffer_pool_t *pool);
 
 int buffer_pool_put(buffer_pool_t *pool, buffer_t *buf);
 
+buffer_t *shrink_chain(buffer_chain_t *chain, size_t size);
+
 int buffer_chain_recv(buffer_chain_t *chain, int fd);
 int buffer_chain_send(buffer_chain_t *chain, int fd);
 
