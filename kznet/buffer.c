@@ -119,6 +119,39 @@ int buffer_pool_put(buffer_pool_t *pool, buffer_t *buf)
     return 0;
 }
 
+buffer_t *shrink_chain(buffer_chain_t *chain, size_t size)
+{
+    size_t   rlen;
+    buffer_t *buf;
+
+    while (chain->rbuf != chain->wbuf) {
+            
+        buf = chain->rbuf;
+        rlen = buffer_rsize(buf);
+        
+        if (size >= rlen) {
+            size -= rlen;
+            chain->rbuf = buf->next;
+            buffer_pool_put(chain->pool, buf);
+            continue;
+        }
+        
+        buf->pos += size;
+        
+        return buf;
+    }
+
+    buf = chain->rbuf;
+    assert(size <= buffer_rsize(buf));
+
+    buf->pos += size;
+    if (buf->pos == buf->last) {
+        buf->pos = buf->last = buf->start;
+    }
+
+    return buf;
+}
+
 int buffer_chain_recv(buffer_chain_t *chain, int fd)
 {
     size_t   wlen, tlen;
@@ -160,7 +193,7 @@ int buffer_chain_recv(buffer_chain_t *chain, int fd)
         chain->rsize += rv;
         chain->total += rv;
 
-        if (rv < wlen) {
+        if (rv <= wlen) {
             wbuf->last += rv;
             break;
         }
@@ -174,10 +207,6 @@ int buffer_chain_recv(buffer_chain_t *chain, int fd)
         if (rv != wlen + tlen) {
             break;
         }
-
-        temp = buffer_pool_get(pool);
-        chain->wbuf->next = temp;
-        chain->wbuf = temp;
     }
 
     return 1;
@@ -236,29 +265,8 @@ int buffer_chain_send(buffer_chain_t *chain, int fd)
             complete = 1;
         }
 
-        while (rv > 0) {
-            buf = chain->rbuf;
-            rlen = buffer_rsize(buf);
-            if (rv > rlen) {
-                chain->rbuf = buf->next;
-                buffer_pool_put(pool, buf);
-            } else {
-                buf->pos += rv;
-            }
-            rv -= rlen;
-        }
-
-        if (buf->pos == buf->last) {
-            if (buf->next == NULL) {
-                buf->pos = buf->last = buf->start;
-                break;
-            } else {
-                chain->rbuf = buf->next;
-                buffer_pool_put(pool, buf);
-            }
-        }
-
-        if (!complete) {
+        buf = shrink_chain(chain, rv);
+        if (!complete || buf->pos == buf->last) {
             break;
         }
     }
