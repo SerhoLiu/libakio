@@ -161,7 +161,7 @@ int buffer_chain_recv(buffer_chain_t *chain, int fd)
     buffer_pool_t *pool;
     struct iovec vec[2];
 
-    chain->rsize = 0;
+    chain->recv = 0;
     pool = chain->pool;
 
     while (1) {
@@ -190,8 +190,7 @@ int buffer_chain_recv(buffer_chain_t *chain, int fd)
             continue;
         }
 
-        chain->rsize += rv;
-        chain->total += rv;
+        chain->recv += rv;
 
         if (rv <= wlen) {
             wbuf->last += rv;
@@ -222,7 +221,7 @@ int buffer_chain_send(buffer_chain_t *chain, int fd)
     buffer_pool_t *pool;
     struct iovec   vec[SM_MAX_IOV];
 
-    chain->ssize = 0;
+    chain->sent = 0;
     pool = chain->pool;
     
     while (1) {
@@ -258,8 +257,7 @@ int buffer_chain_send(buffer_chain_t *chain, int fd)
             continue;
         }
 
-        chain->ssize += rv;
-        chain->total -= rv;
+        chain->sent += rv;
 
         if (rv == total) {
             complete = 1;

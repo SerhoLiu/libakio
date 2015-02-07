@@ -21,8 +21,7 @@ struct buffer_chain {
     buffer_t *rbuf;
     buffer_t *wbuf;
 
-    size_t total;
-    size_t ssize, rsize;
+    size_t sent, recv;
 
     buffer_pool_t *pool;
 };
