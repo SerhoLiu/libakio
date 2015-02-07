@@ -223,11 +223,9 @@ int buffer_chain_send(buffer_chain_t *chain, int fd)
     ssize_t  rv;
     buffer_t *buf;
 
-    buffer_pool_t *pool;
     struct iovec   vec[SM_MAX_IOV];
 
     chain->sent = 0;
-    pool = chain->pool;
     
     while (1) {
         
