@@ -1,3 +1,15 @@
+/**
+ * \file event.h
+ *
+ * \brief Event Loop
+ *
+ * Copyright (c) 2015 Serho Liu. All rights reserved.
+ *
+ * Use of this source code is governed by a MIT-style license that can be
+ * found in the MIT-LICENSE file.
+ *
+ */
+
 #ifndef _KZNET_EVENT_H_
 #define _KZNET_EVENT_H_
 

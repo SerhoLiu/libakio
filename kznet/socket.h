@@ -1,3 +1,15 @@
+/**
+ * \file socket.h
+ *
+ * \brief socket ops
+ *
+ * Copyright (c) 2015 Serho Liu. All rights reserved.
+ *
+ * Use of this source code is governed by a MIT-style license that can be
+ * found in the MIT-LICENSE file.
+ *
+ */
+
 #ifndef _KZNET_SOCKET_H_
 #define _KZNET_SOCKET_H_
 

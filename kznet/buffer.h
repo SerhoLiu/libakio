@@ -1,3 +1,15 @@
+/**
+ * \file buffer.h
+ *
+ * \brief Read & Write Buffer and Chain
+ *
+ * Copyright (c) 2015 Serho Liu. All rights reserved.
+ *
+ * Use of this source code is governed by a MIT-style license that can be
+ * found in the MIT-LICENSE file.
+ *
+ */
+
 #ifndef _KZNET_BUFFER_H_
 #define _KZNET_BUFFER_H_
 
@@ -10,18 +22,20 @@ typedef struct buffer_pool buffer_pool_t;
 
 
 struct buffer {
-    struct buffer *next;
-    unsigned char *pos;
-    unsigned char *last;
-    unsigned char *start;
-    unsigned char *end;
+    unsigned char *pos;    /*!< read marker */
+    unsigned char *last;   /*!< write marker */
+    unsigned char *start;  /*!< start of buffer(const) */
+    unsigned char *end;    /*!< end of buffer(const) */
+
+    struct buffer *next;   /*!< next buffer */
 };
 
 struct buffer_chain {
     buffer_t *rbuf;
     buffer_t *wbuf;
 
-    size_t sent, recv;
+    size_t sent;
+    size_t recv;
 
     buffer_pool_t *pool;
 };
